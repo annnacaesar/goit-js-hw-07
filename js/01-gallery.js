@@ -25,35 +25,36 @@ function createImageCardMarkup(items) {
 
 };
 
-const onClickOpenModal = (evt) => {
-  evt.preventDefault();
-  const modalImg = evt.target.dataset.source;
-  const modal = basicLightbox.create(
-    `<img
-     src='${modalImg}'
-     data-source='${modalImg}'
-     alt='${evt.target.alt}'
-     class="gallery__image"
-     width="800"
-     height="600">`,
+const onClickOpenModal = (event) => {
+	event.preventDefault();
+	const originalSource = event.target.dataset.source;
+	const modal = basicLightbox.create(
+		`
+		<img
+      class="gallery__image"
+      src="${originalSource}"
+      data-source="${originalSource}"
+      alt="${event.alt}"
+			width="800"
+      height="600"
+    />
+		`,
+		{
+			onShow: (modal) => {
+				window.addEventListener('keydown', onEscapePress);
+			},
+			onClose: (modal) => {
+				window.removeEventListener('keydown', onEscapePress);
+			}
+		});
+	
+	const onEscapePress = (modal) => {
+		if (event.code === "ESCAPE") {
+			modal.close();
+		}
+	};
 
-    {
-      onShow: (modal) => {
-        window.addEventListener("keydown", onEscapePress);
-      },
-      onClose: (modal) => {
-        window.removeEventListener("keydown", onEscapePress);
-      },
-    }
-  );
-
-  const onEscapePress = (evt) => {
-    if (evt.code === "Escape") {
-      modal.close();
-    }
-  };
-
-  modal.show();
+	modal.show();
 };
 
 galleryContainer.addEventListener('click', onClickOpenModal);
